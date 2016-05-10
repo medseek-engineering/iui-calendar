@@ -73,12 +73,12 @@
     jsFilesCombined.push(packageJson.buildSettings.destination.js +
                          '/'+packageJson.buildSettings.createTemplates.templateFile);
     jsFilesCombined.push(packageJson.buildSettings.combineFiles.ignore);
+
+    jsFilesCombined.push(require.resolve('fullcalendar'));
+    jsFilesCombined.push(require.resolve('angular-ui-calendar'));
+
     gulp.src(jsFilesCombined, {base: packageJson.buildSettings.base})
-      .pipe(babel({
-        presets: ['es2015']
-      }))
       .pipe(gulpConcat(packageJson.buildSettings.destination.jsFile))
-      .pipe(browserify({debug: true}))
       .pipe(gulp.dest(packageJson.buildSettings.destination.js))
       .pipe(rename(packageJson.buildSettings.destination.jsFileMin))
       .pipe(minjs({mangle: false}))
