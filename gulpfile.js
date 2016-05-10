@@ -2,6 +2,7 @@
   'use strict';
 
   var gulp = require('gulp');
+  var browserify = require('gulp-browserify');
   var gulpConcat = require('gulp-concat');
   var minjs = require('gulp-uglify');
   var babel = require('gulp-babel');
@@ -64,7 +65,7 @@
       .on('end', cb);
   });
 
-  gulp.task('combineFiles', ['createTemplates'], function(){
+  gulp.task('combineFiles', function(){
     // combine and minify JS
 
     var jsFilesCombined = [].concat(packageJson.buildSettings.appFiles.jsFiles);
@@ -77,6 +78,7 @@
         presets: ['es2015']
       }))
       .pipe(gulpConcat(packageJson.buildSettings.destination.jsFile))
+      .pipe(browserify({debug: true}))
       .pipe(gulp.dest(packageJson.buildSettings.destination.js))
       .pipe(rename(packageJson.buildSettings.destination.jsFileMin))
       .pipe(minjs({mangle: false}))
@@ -107,21 +109,21 @@
       .pipe(browserSync.stream());
   });
 
-  gulp.task('server', ['lint', 'test', 'compileStyle', 'createTemplates', 'combineFiles'], function() {
+  gulp.task('server', ['compileStyle', 'combineFiles'], function() {
     environment = 'development';
     browserSync.init({
         server: {
           baseDir: './'
         }
     });
-    gulp.watch(allLintFiles, ['lint', 'combineFiles']);
+    gulp.watch(allLintFiles, ['combineFiles']);
     gulp.watch(packageJson.buildSettings.appFiles.styles, ['compileStyle']);
     gulp.watch(packageJson.buildSettings.appFiles.htmlFiles, ['createTemplates', 'combineFiles']);
   });
 
-  gulp.task('build', ['lint', 'test', 'createTemplates', 'combineFiles', 'compileStyle']);
+  gulp.task('build', ['combineFiles', 'compileStyle']);
 
-  gulp.task('publish', ['lint', 'test', 'createTemplates', 'combineFiles', 'compileStyle']);
+  gulp.task('publish', ['combineFiles', 'compileStyle']);
 
   gulp.task('default', ['server']);
 
