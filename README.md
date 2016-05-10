@@ -1,11 +1,3 @@
-Vars to be replaced:
- - iui-calendar
- - iuiCalendar
- - iui.calendarTemplates
- - iui.calendar
- - Calendar
-
-
 # iui-calendar
 
 *Angular version: 1.3.2*
